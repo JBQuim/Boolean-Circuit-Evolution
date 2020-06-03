@@ -1,23 +1,20 @@
 import numpy as np
 from itertools import product
 import random
-import matplotlib.pyplot as plt
-from matplotlib.figure import Figure
 import copy
 import time
 import bisect
-from matplotlib.backends.backend_agg import FigureCanvasAgg as FigureCanvas
 
-genome = np.array([(1, 2), (-1, -2), (-3, -4), (2, 2)])
+
 sizeParam = 0.2
 inputCount = 4
 cutoff = 10
 fractionElite = 0.3
 maxSize = 16
 minSize = 5
-mutationChance = 0.3
-# nothing - duplication - deletion - switch - new
-mutationWeights = [0.3, 0.1, 0.2, 0.35, 0.05]
+# nothing - duplication - new - delete - switch - crossover
+mutationWeights = [0.3, 0.05, 0.1, 0.05, 0.10, 0.4]
+
 popSize = 1000
 simLength = 30000
 
@@ -140,12 +137,50 @@ def g2(inputs):
 
 
 def mutate(generation):
+    popSize = len(generation)
     integers = WeightedRandomGenerator(mutationWeights)
     mutationType = [integers() for i in generation]
     mutationType[:int(popSize * fractionElite)] = [0] * int(popSize * fractionElite)
-    mutationFunctions = np.array([lambda x: x, duplicate, addGate, removeGate, switchInputs])
+
+    mutationFunctions = np.array([lambda x: x, duplicate, addGate, removeGate, switchInputs, lambda x: x])
     newGeneration = np.array([mutationFunctions[mutationType[i]](specimen) for i, specimen in enumerate(generation)])
+
+    crossoverCount = np.count_nonzero(mutationType == 5)
+    crossOverPairs = [newGeneration[i] for i, k in enumerate(mutationType) if
+                      k == 5 and not (i == crossoverCount and i % 2 == 0)]
+    for i, (genome1, genome2) in enumerate(
+            zip(crossOverPairs[:len(crossOverPairs) // 2], crossOverPairs[len(crossOverPairs) // 2:])):
+        newGeneration[i], newGeneration[i + 1] = crossOver(genome1, genome2)
+
     return newGeneration
+
+
+def crossOver(individual1, individual2):
+    size1 = len(individual1)
+    size2 = len(individual2)
+
+    recombinationSite = random.randint(1, min(size1, size2) - 1)
+    individual1[recombinationSite:], individual2[recombinationSite:] = copy.deepcopy(
+        individual2[recombinationSite:]), copy.deepcopy(individual1[recombinationSite:])
+
+    size1 = len(individual1)
+    possible = [i for i in range(-inputCount, size1) if i != 0]
+    for i, (k1, k2) in enumerate(individual1):
+        if k1 >= size1:
+            individual1[i][0] = random.choice(possible)
+        if k2 >= size1:
+            individual1[i][1] = random.choice(possible)
+
+    size2 = len(individual2)
+    possible = [i for i in range(-inputCount, len(individual2)) if i != 0]
+    for i, (k1, k2) in enumerate(individual2):
+        if k1 >= size2:
+            individual2[i][0] = random.choice(possible)
+        if k2 >= size2:
+            individual2[i][1] = random.choice(possible)
+    return individual1, individual2
+
+
 
 
 def duplicate(genome):
@@ -166,10 +201,6 @@ def duplicate(genome):
                 slice[k][1] = i1 + size - point1
         for i in range(random.randint(0, 2)):
             switchInputs(new)
-        if len(new) > maxSize:
-            print("Went from " + str(size) + " to " + str(len(new)))
-            print("Duplication size was: " + str(duplicationSize))
-            print("Allowed range was: 1, " + str(min(size - point1, maxSize - point1) - 1))
     return new
 
 
@@ -200,12 +231,7 @@ def removeGate(genome):
             genome[i][0] -= 1
         if k1 > target:
             genome[i][1] -= 1
-    try:
-        del genome[target]
-    except:
-        print(genome)
-        print(target)
-        print("ERROR FOUND ---------------------------------------------------------------------------------------")
+    del genome[target]
     return genome
 
 
@@ -236,10 +262,6 @@ def runGeneration(population, goal):
 
     newGen = np.array([copy.deepcopy(elite[i % len(elite)]) for i in range(len(population))])
 
-    difference = len(population) - len(newGen)
-    if difference > 0:
-        newGen = np.concatenate((newGen, elite[:difference]))
-
     return mutate(newGen), maxFitness, mostFit
 
 
@@ -253,33 +275,39 @@ def countMayhem(population):
     return [checkMayhem(specimen) for specimen in population].count(True)
 
 
-
 generation = np.array([randomNetwork(10, 15) for i in range(popSize)])
 t1 = time.clock()
 history = np.full(simLength, np.nan)
 
-fig = Figure()
-canvas = FigureCanvas(fig)
-ax = fig.add_subplot(111)
-
 i = 0
 history[0] = 0
-while history[i] < 1 and i < simLength - 1:
+t0 = time.clock()
+while i < simLength - 1:
     i += 1
-    if i % 50 == 0:
+    if i % 50 == 0 and i != 0:
         t2 = time.clock()
         print("Generations: " + str(i))
         if i != 0:
             print("Time per generation: " + str((t2 - t1) / 50))
             print("Fitness: " + str(history[i - 1]))
+            data = open("data.txt", "w")
+            data.write(",".join([str(k) for k in history[:i]]))
+            data.close()
+
         t1 = time.clock()
-    generation, history[i], winner = runGeneration(generation, g1)
+    if i % 40 < 20:
+        generation, history[i], winner = runGeneration(generation, g2)
+        if history[i] == 1:
+            networkFile = open("networks.txt", "a")
+            networkFile.write("For G2: \n")
+            networkFile.write(str(winner) + " \n")
+    else:
+        generation, history[i], winnner = runGeneration(generation, g1)
+        if history[i] == 1:
+            networkFile = open("networks.txt", "a")
+            networkFile.write("For G1: \n")
+            networkFile.write(str(winner) + " \n")
+
 t2 = time.clock()
 print(winner)
-print((t2 - t1) / i)
-
-fig.clf()
-plt.xlabel("Generations")
-plt.ylabel("Fitness")
-plt.plot(list(range(simLength)), history)
-plt.show()
+print((t2 - t0) / i)
