@@ -22,13 +22,25 @@ popSize = 1000
 simLength = 30000
 
 
-def resolve(numb, genome, inputs):
+def resolve(numb, genome, inputs, visited=None, computed=None):
+    if visited is None:
+        visited = [False] * len(genome)
+    if computed is None:
+        computed = [2] * len(genome)
     if numb < 0:
         return inputs[-1 + numb * -1]
-    else:
-        input1 = resolve(genome[numb][0], genome, inputs)
-        input2 = resolve(genome[numb][1], genome, inputs)
-        return not (input1 and input2)
+    elif not visited[numb]:
+        visited[numb] = True
+        input1 = resolve(genome[numb][0], genome, inputs, visited, computed)
+        if input1 == 0:
+            computed[numb] = 1
+        else:
+            input2 = resolve(genome[numb][1], genome, inputs, visited, computed)
+            if input2 == 0:
+                computed[numb] = 1
+            elif input1 == 1 and input2 == 1:
+                computed[numb] = 0
+    return computed[numb]
 
 
 class WeightedRandomGenerator(object):
@@ -53,12 +65,12 @@ def truthTable(genome, possibleInputs):
 
 
 def fitness(genome, func):
-    possibleInputs = list(product([True, False], repeat=inputCount))
+    possibleInputs = list(product([1, 0], repeat=inputCount))
     requiredOutputs = [func(booleans) for booleans in possibleInputs]
 
-    mistakes = np.logical_xor(requiredOutputs, truthTable(genome, possibleInputs))
+    correct = np.equal(requiredOutputs, truthTable(genome, possibleInputs))
 
-    accuracy = 1 - sum(mistakes) / len(possibleInputs)
+    accuracy = sum(correct) / len(possibleInputs)
     sizePenalty = sizeParam * max(0, len(getPrecursors(genome, [0])) - cutoff)
 
     return accuracy - sizePenalty
@@ -114,11 +126,7 @@ def countCycles(population):
 def randomNetwork(minSize, maxSize):
     size = random.randint(minSize, maxSize)
     possibleConnections = [x for x in range(-inputCount, size) if x != 0]
-
-    cycles = True
-    while cycles:
-        genome = [[random.choice(possibleConnections), random.choice(possibleConnections)] for i in range(size)]
-        cycles = hasCycles(genome)
+    genome = [[random.choice(possibleConnections), random.choice(possibleConnections)] for i in range(size)]
 
     return genome
 
@@ -168,6 +176,7 @@ def duplicate(genome):
 def addGate(genome):
     size = len(genome)
     if size < maxSize:
+        # should be size+1 if wiring to itself is to be allowed. For now, not because this motif is probably not good
         options = [i for i in range(-inputCount, size) if i != 0]
         genome = genome + [[random.choice(options), random.choice(options)]]
     return genome
@@ -180,12 +189,10 @@ def removeGate(genome):
     target = random.randint(1, size - 1)
     for i, (k0, k1) in enumerate(genome):
         if k0 == target:
-            possible = available(genome, i)
-            possible.remove(target)
+            possible = [x for x in range(-inputCount, size) if x != 0 and x != target]
             genome[i][0] = random.choice(possible)
         if k1 == target:
-            possible = available(genome, i)
-            possible.remove(target)
+            possible = [x for x in range(-inputCount, size) if x != 0 and x != target]
             genome[i][1] = random.choice(possible)
 
     for i, (k0, k1) in enumerate(genome):
@@ -207,7 +214,7 @@ def switchInputs(genome):
     target1 = random.randint(0, size - 1)
     target2 = random.randint(0, 1)
 
-    possible = available(genome, target1)
+    possible = [i for i in range(-inputCount, size) if i != 0]
 
     genome[target1][target2] = random.choice(possible)
     return genome
@@ -246,6 +253,7 @@ def countMayhem(population):
     return [checkMayhem(specimen) for specimen in population].count(True)
 
 
+
 generation = np.array([randomNetwork(10, 15) for i in range(popSize)])
 t1 = time.clock()
 history = np.full(simLength, np.nan)
@@ -268,7 +276,7 @@ while history[i] < 1 and i < simLength - 1:
     generation, history[i], winner = runGeneration(generation, g1)
 t2 = time.clock()
 print(winner)
-print((t2 - t1) / simLength)
+print((t2 - t1) / i)
 
 fig.clf()
 plt.xlabel("Generations")
