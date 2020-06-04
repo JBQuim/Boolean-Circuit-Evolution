@@ -4,19 +4,20 @@ import random
 import copy
 import time
 import bisect
+from numba import jit
 
 
 sizeParam = 0.2
 inputCount = 4
 cutoff = 10
 fractionElite = 0.3
-maxSize = 16
-minSize = 5
+maxSize = 15
+minSize = 9
 # nothing - duplication - new - delete - switch - crossover
-mutationWeights = [0.3, 0.05, 0.1, 0.05, 0.10, 0.4]
+mutationWeights = [0.3, 0.05, 0.05, 0.05, 0.05, 0.5]
 
 popSize = 1000
-simLength = 30000
+simLength = 100000
 
 
 def resolve(numb, genome, inputs, visited=None, computed=None):
@@ -143,7 +144,7 @@ def mutate(generation):
     mutationType[:int(popSize * fractionElite)] = [0] * int(popSize * fractionElite)
 
     mutationFunctions = np.array([lambda x: x, duplicate, addGate, removeGate, switchInputs, lambda x: x])
-    newGeneration = np.array([mutationFunctions[mutationType[i]](specimen) for i, specimen in enumerate(generation)])
+    newGeneration = [mutationFunctions[mutationType[i]](specimen) for i, specimen in enumerate(generation)]
 
     crossoverCount = np.count_nonzero(mutationType == 5)
     crossOverPairs = [newGeneration[i] for i, k in enumerate(mutationType) if
@@ -257,10 +258,10 @@ def runGeneration(population, goal):
     fitnesses = [fitness(individual, goal) for individual in population]
     maxFitness = max(fitnesses)
     indexes = np.argsort(fitnesses)[int(len(population) * (1 - fractionElite)):]
-    elite = population[indexes][::-1]
+    elite = [genome for i, genome in enumerate(population) if i in indexes][::-1]
     mostFit = elite[0]
 
-    newGen = np.array([copy.deepcopy(elite[i % len(elite)]) for i in range(len(population))])
+    newGen = [copy.deepcopy(elite[i % len(elite)]) for i in range(len(population))]
 
     return mutate(newGen), maxFitness, mostFit
 
@@ -275,7 +276,7 @@ def countMayhem(population):
     return [checkMayhem(specimen) for specimen in population].count(True)
 
 
-generation = np.array([randomNetwork(10, 15) for i in range(popSize)])
+generation = [randomNetwork(minSize, maxSize) for i in range(popSize)]
 t1 = time.clock()
 history = np.full(simLength, np.nan)
 
