@@ -4,7 +4,6 @@ from numba import jit
 import networkx as nx
 from networkx.algorithms import community
 
-
 inputCount = 4
 
 @jit(nopython=True)
@@ -27,10 +26,15 @@ def resolve(numb, genome, inputs, computed=None):
                 computed[numb] = 0
     return computed[numb]
 
-
+# function can be written as map or list comprehension but is written as for loop for compatibility with numba
+@jit(nopython=True)
 def truthTable(genome, possibleInputs):
     # calculate the output for every possible input
-    return np.array(list(map(lambda x: resolve(0, genome, x), possibleInputs)))
+    results = np.full(len(possibleInputs), np.nan)
+    for i in range(len(possibleInputs)):
+        results[i] = resolve(0, genome, possibleInputs[i])
+    return results
+
 
 
 def getDependents(genome, numbs, visited=None):
@@ -107,7 +111,7 @@ def getPrecursorsWithInputs(genome, numbs=None, visited=None):
         return getPrecursorsWithInputs(genome, directPrecursors, visited)
 
 
-def randomNetwork(size):
+def randomNetwork(size, inputCount):
     # initializes completely random networks
     possibleConnections = np.arange(-inputCount, size)
     genome = np.array([random.choice(possibleConnections) for i in range(size * 2)])

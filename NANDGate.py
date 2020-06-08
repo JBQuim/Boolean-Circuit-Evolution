@@ -4,20 +4,19 @@ import time
 import NetworkFunctions as NFunc
 import EvolutionFunctions as GAFunc
 
-sizeParam = 0.2
+sizeParam = 0.1
 inputCount = 4
 cutoff = 12
 length = 13
 Qmax = 0.6339
 Qrand = 0.3523
-
-
 popSize = 1000
 simLength = 100000
+config = dict([("mutation weights", [0.3, 0.05, 0.05, 0.25, 0.35]), ("elite fraction", 0.3)])
+inputs = np.array(list(product([1, 0], repeat=inputCount)))
 
-def booleanFitness(genome, func):
+def booleanFitness(genome, func, possibleInputs):
     # return the fitness of a network given by the % similarity across all inputs with func minus a size penalty
-    possibleInputs = list(product([1, 0], repeat=inputCount))
     requiredOutputs = [func(booleans) for booleans in possibleInputs]
     correct = np.equal(requiredOutputs, NFunc.truthTable(genome, possibleInputs))
 
@@ -43,7 +42,15 @@ def modularityFitness(genome):
 
     return modularity-penalty
 
-generation = np.array([NFunc.randomNetwork(length) for i in range(popSize)])
+def averageModularity(population, fitnesses):
+    examined = population[fitnesses==1]
+    if len(examined)>0:
+        mean = np.mean([NFunc.getModularity(specimen) for specimen in examined])
+    else:
+        mean = np.nan
+    return mean
+
+generation = np.array([NFunc.randomNetwork(length, inputCount) for i in range(popSize)])
 
 
 t1 = time.clock()
@@ -70,16 +77,15 @@ while i < simLength - 1:
 
         t1 = time.clock()
 
-    if i % 40 < 40:
-        generation, history[i], winner = GAFunc.runGeneration(generation, lambda x: booleanFitness(x, g2))
+    if i % 40 > 40:
+        generation, history[i], winner, modularities[i] = GAFunc.runGeneration(generation, lambda x: booleanFitness(x, g2, inputs), averageModularity, config)
         if history[i] == 1:
             networkFile = open("Data/networks.txt", "a")
             networkFile.write("For G2: \n")
             networkFile.write(str(winner) + " \n")
     else:
-        generation, history[i], winner = GAFunc.runGeneration(generation, lambda x: booleanFitness(x, g1))
+        generation, history[i], winner, modularities[i] = GAFunc.runGeneration(generation, lambda x: booleanFitness(x, g1, inputs), averageModularity, config)
         if history[i] == 1:
             networkFile = open("Data/networks.txt", "a")
             networkFile.write("For G1: \n")
             networkFile.write(str(winner) + " \n")
-    modularities[i] = NFunc.adjustedModularity(winner, Qmax, Qrand)

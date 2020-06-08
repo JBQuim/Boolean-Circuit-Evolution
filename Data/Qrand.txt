@@ -1,0 +1,2 @@
+Average modularity over 9116 random networks found to be: 
+0.3518052302278957±0.0005931436089766531

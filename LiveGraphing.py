@@ -53,6 +53,7 @@ def animate(i):
         ax3.set_ylabel("Modularity", color=color)
         ax3.scatter(dataLongX2, data2, color=color, alpha=0.1, s=5)
         ax3.tick_params(axis="y", labelcolor=color)
+        ax3.set_ybound(0, 0.7)
 
 
 ani = animation.FuncAnimation(fig, animate, interval=1000)
