@@ -15,6 +15,6 @@ average = np.mean(modularities)
 stdDev = sem(modularities)
 
 # write measured modularity to file
-with open("Data\Qrand.txt", "w") as outputFile:
+with open("Data\AdjustedModularityParams\Qrand.txt", "w") as outputFile:
     outputFile.write("Average modularity over " + str(len(sanitizedNetworks)) + " random networks found to be: \n")
     outputFile.write(str(average) + "±" + str(stdDev))
