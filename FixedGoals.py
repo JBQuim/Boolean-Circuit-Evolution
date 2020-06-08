@@ -16,10 +16,9 @@ length = 13
 # period specifies every how many generations the internal state is printed to console
 # consecutiveEpochs is the number of consecutive epochs ending in a perfect solution before terminating the sim
 popSize = 1000
-simLength = int(10E3)
-epochLength = 20
-consecutiveEpochs = 20
-repetitions = 100
+simLength = int(1E5)
+consecutiveSolutions = 20
+repetitions = 50
 period = 10
 
 # to keep solutions small, a penalty of sizeParam is applied per gate above the cutoff
@@ -88,47 +87,44 @@ for j in range(repetitions):
     i = 0
     terminate = False
     consecutiveSolutionsFound = 0
-    t1 = time.clock()
+    t1 = time.perf_counter()
     while i < simLength and not terminate:
-        # alternate goal every epoch
-        if i % epochLength * 2 < epochLength:
-            goal = lambda x: booleanFitness(x, g1)
-        else:
-            goal = lambda x: booleanFitness(x, g2)
+        # here the fixed goal is specified, make sure to also change the destination of the data
+        goal = lambda x: booleanFitness(x, g1)
+        # goal = lambda x: booleanFitness(x, g2)
         generation, history[i], winners[i], (modularities[i], modularityStdDev[i]) = \
             GAFunc.runGeneration(generation, goal, averageModularity, config)
 
-        # at the end of every epoch check how many consecutive solutions have been found
-        if i % epochLength == epochLength - 1:
-            if history[i] == 1:
-                consecutiveSolutionsFound += 1
-            else:
-                consecutiveSolutionsFound = 0
+        # check how many consecutive solutions have been found
+        if history[i] == 1:
+            consecutiveSolutionsFound += 1
+        else:
+            consecutiveSolutionsFound = 0
 
-            if consecutiveSolutionsFound == consecutiveEpochs:
-                terminate = True
+        if consecutiveSolutionsFound == consecutiveSolutions:
+            terminate = True
 
         # broadcast progress every period generations
         if i % period == 0:
-            t2 = time.clock()
+            t2 = time.perf_counter()
             print("Run: " + str(j+1) + ". Generation " + str(i) + ".")
             print("Fitness: " + str(history[i]))
             print("Time per generation: " + str((t2 - t1) / period))
-            t1 = time.clock()
+            t1 = time.perf_counter()
 
         i += 1
 
     # save all data to the appropiate files
-    with open("Data/ModularGoals/Networks/Networks" + str(j) + ".txt", "w") as outputFile:
+    with open("Data/FixedGoals/G1/Networks/Networks" + str(j) + ".txt", "w") as outputFile:
         networkStrings = [",".join([str(k) for k in network]) for network in winners[:i]]
         outputString = "\n".join(networkStrings)
         outputFile.write(outputString)
 
-    with open("Data/ModularGoals/Fitness/Fitness" + str(j) + ".txt", "w") as outputFile:
+    with open("Data/FixedGoals/G1/Fitness/Fitness" + str(j) + ".txt", "w") as outputFile:
         outputString = "\n".join([str(k) for k in history[:i]])
         outputFile.write(outputString)
 
-    with open("Data/ModularGoals/Modularity/Modularity" + str(j) + ".txt", "w") as outputFile:
+    with open("Data/FixedGoals/G1/Modularity/Modularity" + str(j) + ".txt", "w") as outputFile:
         dataStrings = [str(value) + ", " + str(stdDev) for value, stdDev in zip(modularities[:i], modularityStdDev[:i])]
         outputString = "\n".join(dataStrings)
         outputFile.write(outputString)

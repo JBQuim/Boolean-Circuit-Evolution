@@ -16,7 +16,7 @@ length = 13
 # period specifies every how many generations the internal state is printed to console
 # consecutiveEpochs is the number of consecutive epochs ending in a perfect solution before terminating the sim
 popSize = 1000
-simLength = int(10E3)
+simLength = int(1E5)
 epochLength = 20
 consecutiveEpochs = 20
 repetitions = 100
@@ -88,7 +88,7 @@ for j in range(repetitions):
     i = 0
     terminate = False
     consecutiveSolutionsFound = 0
-    t1 = time.clock()
+    t1 = time.perf_counter()
     while i < simLength and not terminate:
         # alternate goal every epoch
         if i % epochLength * 2 < epochLength:
@@ -110,11 +110,11 @@ for j in range(repetitions):
 
         # broadcast progress every period generations
         if i % period == 0:
-            t2 = time.clock()
+            t2 = time.perf_counter()
             print("Run: " + str(j+1) + ". Generation " + str(i) + ".")
             print("Fitness: " + str(history[i]))
             print("Time per generation: " + str((t2 - t1) / period))
-            t1 = time.clock()
+            t1 = time.perf_counter()
 
         i += 1
 
