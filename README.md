@@ -34,7 +34,7 @@ The quality of a solution is judged by the similarity of the network's output to
 
 ### Evolutionary algorithm 
 
-To reach a solution, the evolutionary algorithm works as follows. At the beginning of the simulation, a population of random networks is produced. This is the first generation. To produce the next generation, the fitness of every individual is evaluated and an elite fraction selected from the most fit individuals. The fitness of an individual is taken to be the accuracy of its output over all the possible inputs, with a small penalty for every gate employed above a certain cut off. This helps keep the network size small. The individuals in the elite fraction pass to the next generation unmutated. The elite fraction is also mutated slightly to form new individuals, which then pass to the new generation. By repeating this process iteratively, the fitness of the population slowly increases until a perfect solution of fitness 1 is reached.
+To reach a solution, the evolutionary algorithm works as follows. At the beginning of the simulation, a population of random networks is produced. This is the first generation. To produce the next generation, the fitness of every individual is evaluated and an elite fraction selected from the most fit individuals. The individuals in the elite fraction pass to the next generation unmutated. The elite fraction is also mutated slightly to form new individuals, which then pass to the new generation. By repeating this process iteratively, the fitness of the population slowly increases, representing better and better solutions.
 
 Mutations can be point mutations, which switch the input of a single gate for another input; deletions, which delete a gate and rewire everything that was connected to it; additions, which produce a new randomly wired gate; and crossovers, which swap parts of two genomes to produce two new genomes.
 
@@ -42,8 +42,22 @@ Mutations can be point mutations, which switch the input of a single gate for an
 
 Modularity is a property of a partition of a network into modules. The modularity of a partition is the fraction of the edges that lie within a module minus the expected number for this quantity, summed over all modules. For information on how to find the partition and then calculate its modularity refer to [this](https://doi.org/10.1103/PhysRevE.69.066133) paper. Here, the algorithm is implemented by the python library `networkx`.
 
-The modularity thus obtained, `Qreal`, is normalized with respect to randomly generated networks. This measure, `Qm` can be found from the expression:
+The modularity thus obtained, `Qreal`, can be normalized with respect to randomly generated networks to obtain `Qm`. This measure can be found from the expression:
 
 `Qm = (Qreal-Qrand)/(Qmax-Qreal)`
 
 Where `Qrand` is the modularity of a randomly generated network and `Qmax` the maximum modularity of a network. Both measures refer to networks with connectivity matching that of the possible solutions, i.e. with at least 10 gates connected to gate 0. `Qrand` was found by generating many random networks, finding their modularity and taking the average. `Qmax` was found by applying the evolutionary algorithm with the fitness of a genome being its modularity. In this scheme, a network with `Qm` of 1 has the maximum possible modularity and `Qm` of 0 has the modularity of a randomly generated network. Networks with negative `Qm` are nonetheless possible.
+
+## Results
+
+The evolutionary algorithm was challenged with creating a network of NAND gates that would take four boolean inputs and output the same value as some function `G`. The fitness function was the fraction of all inputs that produced the correct output, with a small penalty for size being over a certain cutoff. This ensured that networks would remain small. 
+
+The first boolean functions attempted were `G1 = I1 XOR I2 AND I3 XOR I4` and `G2 = I1 XOR I2 OR I3 XOR I4`. Over the 50 runs, 35 and 38 reached solutions for the target function within 1E5 generations. Over the runs that did reach a solution, the number of generations taken to reach a solution was 1620 (-884, 2768) and 12773 (-7016, 26286) for G1 and G2, respectively. It is interesting that despite G2 seemingly being of the same complexity it took about eight times as many generations to reach. A typical fitness over time run is shown in Fig. 2.
+
+<p align="center">
+  <img width="460" src="Figures/TypicalG1Run.png">
+</p>
+
+<p align="center">
+  Fig. 2 - the increase in fitness shows logarithmic slowdown, a common feature of evolutionary algorithms
+</p>
