@@ -52,14 +52,14 @@ Where `Qrand` is the modularity of a randomly generated network and `Qmax` the m
 
 The evolutionary algorithm was challenged with creating a network of NAND gates that would take four boolean inputs and output the same value as some function `G`. The fitness function was the fraction of all inputs that produced the correct output, with a small penalty for size being over a certain cutoff. This ensured that networks would remain small. 
 
-The first boolean functions attempted were `G1 = I₁ XOR I₂ AND I₃ XOR I₄` and `G2 = I₁ XOR I₂ OR I₃ XOR I₄`. Over the 50 runs, 35 and 38 reached solutions for the target function within 10⁵ generations. Over the runs that did reach a solution, the number of generations taken to reach a solution was 1620 (-884, 2768) and 12773 (-7016, 26286) for G1 and G2, respectively. It is interesting that despite G2 seemingly being of the same complexity it took about eight times as many generations to reach. The fitness of the most fit individual over time in a typical run is shown in Fig. 2.
+The first boolean functions attempted were `G1 = I₁ XOR I₂ AND I₃ XOR I₄` and `G2 = I₁ XOR I₂ OR I₃ XOR I₄`. Over the 50 runs carried out for each goal, 35 and 38, for G1 and G2 respectively, reached solutions within 10⁵ generations. Over the runs that did reach a solution, the number of generations taken to reach a solution was 1620 (-884, 2768) and 12773 (-7016, 26286) for G1 and G2, respectively. It is interesting that despite G2 seemingly being of the same complexity it took about eight times as many generations to reach a perfect solution. The fitness of the most fit individual over time in a typical run is shown in Fig. 2.
 
 <p align="center">
   <img width="460" src="Figures/TypicalG1Run.png">
 </p>
 
 <p align="center">
-  Fig. 2 - the increase in fitness shows logarithmic slowdown, a common feature of evolutionary algorithms
+  Fig. 2 - Typical run with fixed goals. The increase in fitness shows logarithmic slowdown, a common feature of evolutionary algorithms
 </p>
 
 Despite both goals being strictly modular, being made out of two XOR modules and an AND/OR module, the solutions that were found had very low modularity. They had values of Qm of -0.06 ± 0.21 and 0.12 ± 0.19 for G1 and G2, respectively.
@@ -67,3 +67,28 @@ Despite both goals being strictly modular, being made out of two XOR modules and
 The paper suggests, and confirms, that evolving networks under "modularly varying goals" would produce modular solutions. The key insight is that if the goal is varied every few generations, *but the goals have shared subgoals*, those individuals that had evolved modules dedicated to solving one of the subproblems would find it easier to adapt to the new goal.
 
 Here the goal is switched every 20 generations between G1 and G2. All 100 runs terminated within 10⁵ generations and took 1870 (-1010, 1355) generations. A typical run can be seen in Fig. 3. As expected, the modularity of solutions under time-varying modular goals was much higher than that evolved under fixed goals, with Qm = 0.42 ± 0.08 (see Fig. 4).
+
+<p align="center">
+  <img width="460" src="Figures/TypicalModularRun.png">
+</p>
+
+<p align="center">
+  Fig. 3 - Most fit individual at the end of every epoch (Top). Towards the end, one of the goals is solved but the other is not, leading to switching behaviour. Most fit individual every generation at the end of the run (Bottom). As soon as the goal is switched, the fitness drops and then returns to 1 within 10 generations. 
+</p>
+
+
+<p align="center">
+  <img width="460" src="Figures/BoxPlotModularity.png">
+</p>
+
+<p align="center">
+  Fig. 4 - Average modularity of the perfect solutions produced under three different types of goals. Those under time varying modular goals are significantly more modular.
+</p>
+
+## Conclusion
+
+Some of the findings of the paper by Uri Alon and Nadav Kashtan are reproduced. Notably the fact that electrical circuits evolved under time varying modular goals are shown to produce highly modular solutions when compared to those evolved under fixed goals.
+
+## Future
+
+Due to a bug, the networks saved to the folders were not the most fit within the generation but rather a random network within the elite fraction. The bug has been fixed now but replicating the evolution would take days. In the future, more of the findings of the paper could be explored. In particular, the time evolution of modularity when perfectly modular solutions are subject to fixed goals.
