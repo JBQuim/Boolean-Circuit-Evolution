@@ -27,11 +27,8 @@ def getModularity(path, fileCount):
     modularities = modularities[~np.isnan(modularities)]
     return modularities
 
-resolution = 20
+
 maxLength = int(1E5)
-resolution = 20
-start = resolution - 1
-labels = ["Modular goals", "G1 fixed goal", "G2 fixed goal"]
 
 # get the fitness over time of all experiments
 G1Fitness = getTrajectories("Data/FixedGoals/G1/Fitness/Fitness", 50, maxLength)
@@ -57,15 +54,17 @@ print(str(len(lengthG1)) + " successful solves of G1")
 print(str(len(lengthG2)) + " successful solves of G2")
 print(str(len(lengthModularGoals)) + " successful solves of alternating G1 and G2")
 
-print("Time taken to complete G1 was: " + str(meanG1) + " (" + str(quartilesG1[0]) + ", " + str(quartilesG1[1]) + ")")
-print("Time taken to complete G2 was: " + str(meanG2) + " (" + str(quartilesG2[0]) + ", " + str(quartilesG2[1]) + ")")
-print("Time taken to complete alternating G1 and G2 was: " + str(meanModular) + " (" + str(quartilesModular[0]) + ", " + str(quartilesModular[1]) + ")")
+print("Time taken to complete G1: " + str(meanG1) + " (" + str(quartilesG1[0]) + ", " + str(quartilesG1[1]) + ")")
+print("Time taken to complete G2: " + str(meanG2) + " (" + str(quartilesG2[0]) + ", " + str(quartilesG2[1]) + ")")
+print("Time taken to complete alternating G1 and G2: " + str(meanModular) + " (" + str(quartilesModular[0]) + ", " + str(quartilesModular[1]) + ")")
+
 
 # plot the fitness against time of a chosen run, number was varied to get an attractive looking run
 chosen = 12
+chosen = G1Fitness[chosen]
 fig, ax = plt.subplots()
-xdata = list(range(len(G1Fitness[chosen])))
-ydata = G1Fitness[chosen]
+xdata = list(range(len(chosen)))
+ydata = chosen
 ax.plot(xdata, ydata)
 
 ax.set_xlabel("Generations", fontdict={'fontsize': 13})
@@ -76,17 +75,57 @@ ax.set_title("Fitness of a typical G1 run over time", fontdict={'fontsize': 13})
 plt.savefig("Figures/TypicalG1Run.png")
 
 
+# plot the fitness against time of a chosen run, number was varied to get an attractive looking run
+chosen = 26
+chosen = MixedFitness[chosen][~np.isnan(MixedFitness[chosen])]
+chosenLength = len(chosen)
 
+# for the long plot, plot every resolution item so only the very end of the epoch is shown
+resolution = 20
+start = resolution - 1
+zoomWidth = 100
+zoomStart = max(chosenLength-zoomWidth, 0)
 
-# initialize figure for plotting
-boxFig, boxAx = plt.subplots()
+fig, (ax1, ax2) = plt.subplots(2, 1, gridspec_kw={'height_ratios': [2, 1]})
+xdata = list(range(start, chosenLength, resolution))
+xdataZoom = list(range(zoomStart, chosenLength))
+ydata = chosen[start::resolution]
+ydataZoom = chosen[zoomStart:]
+ax1.plot(xdata, ydata)
+ax2.plot(xdataZoom, ydataZoom)
+
+# format axes
+ax2.set_ylim(0.69, 1.05)
+ax1.set_ylabel("Fitness", fontdict={'fontsize': 13})
+ax2.set_ylabel("Fitness", fontdict={'fontsize': 13})
+ax2.set_xlabel("Generations", fontdict={'fontsize': 13})
+ax1.set_title("Fitness as a function of time under time varying modular goals", fontdict={'fontsize': 13})
+ax1.tick_params(axis='both', which='major', labelsize=11)
+ax2.tick_params(axis='both', which='major', labelsize=11)
+
+plt.savefig("Figures/TypicalModularRun.png")
+
 
 # extract the average modularity of the individuals with fitness 1 from the data folder
 MixedModularity = getModularity("Data/ModularGoals/Modularity/Modularity", 100)
 G1modularity = getModularity("Data/FixedGoals/G1/Modularity/Modularity", 50)
 G2modularity = getModularity("Data/FixedGoals/G2/Modularity/Modularity", 50)
-data = [MixedModularity, G1modularity, G2modularity]
+
+# find the average modularity across all runs
+meanG1, stdG1 = np.round(np.mean(G1modularity), 2), np.round(np.std(G1modularity), 2)
+meanG2, stdG2 = np.round(np.mean(G2modularity), 2), np.round(np.std(G2modularity), 2)
+meanMixed, stdMixed = np.round(np.mean(MixedModularity), 2), np.round(np.std(MixedModularity), 2)
+
+# print the average with its standard deviation to the console
+print("Modularity of G1: " + str(meanG1) + " ± " + str(stdG1))
+print("Modularity of G2: " + str(meanG2) + " ± " + str(stdG2))
+print("Modularity of alternating G1 and G2: " + str(meanMixed) + " ± " + str(stdMixed))
+
+# initialize figure for plotting
+boxFig, boxAx = plt.subplots()
+data = [MixedModularity, G2modularity, G1modularity]
 colours = ["tab:orange", "tab:blue", "tab:green"]
+labels = ["Modular goals", "G2 fixed goal", "G1 fixed goal", ]
 
 # generate plot and make some components transparent
 bp = boxAx.boxplot(data)
@@ -123,8 +162,9 @@ boxAx.set_xticklabels(labels)
 boxAx.tick_params(axis='both', which='major', labelsize=13)
 boxAx.set_ylabel("Modularity of solution", fontdict={'fontsize': 13})
 boxAx.yaxis.grid(True, linestyle='-', which='major', color='lightgrey', alpha=0.5)
+boxAx.set_title("Modularity under different sets of goals", fontdict={'fontsize': 13})
 
-plt.show()
+plt.savefig("Figures/BoxPlotModularity.png")
 
 
 """
