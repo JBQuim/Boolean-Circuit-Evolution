@@ -104,7 +104,7 @@ def runGeneration(population, fitnessFunc, reporterFunc, config):
 
     fitnesses = np.array([fitnessFunc(individual) for individual in population])
     indexes = np.argsort(fitnesses)[int(len(population) * (1 - fractionElite)):]
-    elite = np.array([genome for i, genome in enumerate(population) if i in indexes])[::-1]
+    elite = population[indexes][::-1]
 
     newGen = [elite[i % len(elite)].copy() for i in range(len(population))]
 
