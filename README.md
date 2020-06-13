@@ -1,12 +1,12 @@
 # Spontaneous evolution of modularity in logic gate networks
 
-Some of the findings outlined in [this](https://doi.org/10.1073/pnas.0503610102) paper by Nadav Kashtan and Uri Alon are replicated. See the paper for more detailed exploration of the results in more scenarios. This is intended only as a learning exercise inspired by [this](https://youtu.be/cdaynA0PyPU) lecture by Uri Alon.
+Some of the findings outlined in [this](https://doi.org/10.1073/pnas.0503610102) paper by Nadav Kashtan and Uri Alon are replicated. See the paper for more detailed exploration of the results in more scenarios. This was intended only as a learning exercise inspired by [this](https://youtu.be/cdaynA0PyPU) lecture by Uri Alon.
 
 ## Goals
 
 Evolution in nature has produced no shortage in diversity of the design of biological systems. A common feature of most of these systems is that they are *modular*. Modular meaning they can be decomposed into self-contained parts that interact with each other. Signalling networks, for example, are made up of modules that can be changed or rewired by the synthetic biologist to alter the response to some stimuli. Intriguingly, when evolution is simulated it tends not to produce such modular systems. Here, evolutionary algorithms are applied to networks of logic gates to explore the modularity of solutions under different selection pressures.
 
-## Methods
+## Components
 
 ### Networks of logic gates
 
@@ -38,7 +38,7 @@ To reach a solution, the evolutionary algorithm works as follows. At the beginni
 
 Mutations can be point mutations, which switch the input of a single gate for another input; deletions, which delete a gate and rewire everything that was connected to it; additions, which produce a new randomly wired gate; and crossovers, which swap parts of two genomes to produce two new genomes.
 
-### Measuring modularity
+### Modularity measure
 
 Modularity is a property of a partition of a network into modules. The modularity of a partition is the fraction of the edges that lie within a module minus the expected number for this quantity, summed over all modules. For information on how to find the partition and then calculate its modularity refer to [this](https://doi.org/10.1103/PhysRevE.69.066133) paper. Here, the algorithm is implemented by the python library `networkx`.
 
@@ -52,7 +52,7 @@ Where `Qrand` is the modularity of a randomly generated network and `Qmax` the m
 
 The evolutionary algorithm was challenged with creating a network of NAND gates that would take four boolean inputs and output the same value as some function `G`. The fitness function was the fraction of all inputs that produced the correct output, with a small penalty for size being over a certain cutoff. This ensured that networks would remain small. 
 
-The first boolean functions attempted were `G1 = I1 XOR I2 AND I3 XOR I4` and `G2 = I1 XOR I2 OR I3 XOR I4`. Over the 50 runs, 35 and 38 reached solutions for the target function within 1E5 generations. Over the runs that did reach a solution, the number of generations taken to reach a solution was 1620 (-884, 2768) and 12773 (-7016, 26286) for G1 and G2, respectively. It is interesting that despite G2 seemingly being of the same complexity it took about eight times as many generations to reach. A typical fitness over time run is shown in Fig. 2.
+The first boolean functions attempted were `G1 = I₁ XOR I₂ AND I₃ XOR I₄` and `G2 = I₁ XOR I₂ OR I₃ XOR I₄`. Over the 50 runs, 35 and 38 reached solutions for the target function within 10⁵ generations. Over the runs that did reach a solution, the number of generations taken to reach a solution was 1620 (-884, 2768) and 12773 (-7016, 26286) for G1 and G2, respectively. It is interesting that despite G2 seemingly being of the same complexity it took about eight times as many generations to reach. The fitness of the most fit individual over time in a typical run is shown in Fig. 2.
 
 <p align="center">
   <img width="460" src="Figures/TypicalG1Run.png">
@@ -61,3 +61,9 @@ The first boolean functions attempted were `G1 = I1 XOR I2 AND I3 XOR I4` and `G
 <p align="center">
   Fig. 2 - the increase in fitness shows logarithmic slowdown, a common feature of evolutionary algorithms
 </p>
+
+Despite both goals being strictly modular, being made out of two XOR modules and an AND/OR module, the solutions that were found had very low modularity. They had values of Qm of -0.06 ± 0.21 and 0.12 ± 0.19 for G1 and G2, respectively.
+
+The paper suggests, and confirms, that evolving networks under "modularly varying goals" would produce modular solutions. The key insight is that if the goal is varied every few generations, *but the goals have shared subgoals*, those individuals that had evolved modules dedicated to solving one of the subproblems would find it easier to adapt to the new goal.
+
+Here the goal is switched every 20 generations between G1 and G2. All 100 runs terminated within 10⁵ generations and took 1870 (-1010, 1355) generations. A typical run can be seen in Fig. 3. As expected, the modularity of solutions under time-varying modular goals was much higher than that evolved under fixed goals, with Qm = 0.42 ± 0.08 (see Fig. 4).
