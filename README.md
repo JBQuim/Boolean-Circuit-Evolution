@@ -25,7 +25,7 @@ Networks of logic gates are used as a model problem. Networks of NAND gates can 
 The quality of a solution is judged by the similarity of the network's output to the desired output, for every combination of inputs (see Table 1).
 
 <p align="center">
-  <img width="460"src="460" src="https://user-images.githubusercontent.com/63521540/84573497-17de3580-ada1-11ea-8a0e-4fbf00a7e372.JPG">
+  <img width="460"src="460" src="https://user-images.githubusercontent.com/63521540/84573608-e6199e80-ada1-11ea-8b7e-e7f8d5768a9d.JPG">
 </p>
 
 <p align="center">
