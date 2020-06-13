@@ -8,12 +8,54 @@ import numpy as np
 
 style.use("seaborn-dark")
 
-fig, (ax1, ax2) = plt.subplots(2, 1, gridspec_kw={'height_ratios': [2, 1]})
-ax3 = ax1.twinx()
+fig, (ax1, ax2) = plt.subplots(2, 1, sharex=True)  # , gridspec_kw={'height_ratios': [2, 1]}
+fig2, ax3 = plt.subplots()
+# ax3 = ax1.twinx()
 
 resolution = 20
+maxLength = int(1E5)
+resolution = 20
+start = resolution - 1
 
 
+def getTrajectories(path, fileCount, maxSize):
+    trajectories = np.full((fileCount, maxSize), np.nan)
+    for i in range(fileCount):
+        with open(path + str(i) + ".txt") as file:
+            data = np.array(file.readlines())
+        trajectories[i][:len(data)] = data
+    return trajectories
+
+
+def getModularity(path, fileCount):
+    modularities = np.full(fileCount, np.nan)
+    for i in range(fileCount):
+        with open(path + str(i) + ".txt") as file:
+            data = file.readlines()
+        modularities[i] = data[-1].split(",")[0]
+    return modularities
+
+
+MixedModularity = getModularity("Data/ModularGoals/Modularity/Modularity", 100)
+G1modularity = getModularity("Data/FixedGoals/G1/Modularity/Modularity", 50)
+G1modularity = G1modularity[~np.isnan(G1modularity)]
+
+ax1.hist(MixedModularity)
+ax2.hist(G1modularity)
+
+ax1.set_xlabel("Modularity under varying goals evolution")
+ax2.set_xlabel("Modularity under fixed goal evolution")
+ax1.set_ylabel("Frequency")
+ax2.set_ylabel("Frequency")
+
+ax3.boxplot([MixedModularity, G1modularity])
+ax3.set_xticklabels(["Modular goals", "Fixed goals"])
+ax3.set_ylabel("Modularity of solution")
+plt.show()
+
+plt.show()
+
+"""
 def animate(i):
     graphData = open("Data/data.txt", "r")
     data = graphData.read().split(",")
@@ -58,3 +100,4 @@ def animate(i):
 
 ani = animation.FuncAnimation(fig, animate, interval=1000)
 plt.show()
+"""
