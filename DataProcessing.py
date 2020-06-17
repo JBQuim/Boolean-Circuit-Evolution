@@ -1,6 +1,7 @@
 import matplotlib.pyplot as plt
 import numpy as np
 from matplotlib.patches import Polygon
+from math import ceil
 
 def getTrajectories(path, fileCount, maxSize):
     trajectories = np.full((fileCount, maxSize), np.nan)
@@ -60,7 +61,7 @@ print("Time taken to complete alternating G1 and G2: " + str(meanModular) + " ("
 
 
 # plot the fitness against time of a chosen run, number was varied to get an attractive looking run
-chosen = 12
+chosen = 0
 chosen = G1Fitness[chosen]
 fig, ax = plt.subplots()
 xdata = list(range(len(chosen)))
@@ -76,7 +77,7 @@ plt.savefig("Figures/TypicalG1Run.png")
 
 
 # plot the fitness against time of a chosen run, number was varied to get an attractive looking run
-chosen = 26
+chosen = 30
 chosen = MixedFitness[chosen][~np.isnan(MixedFitness[chosen])]
 chosenLength = len(chosen)
 
@@ -95,6 +96,7 @@ ax1.plot(xdata, ydata)
 ax2.plot(xdataZoom, ydataZoom)
 
 # format axes
+ax1.set_ylim(0.69,1.05)
 ax2.set_ylim(0.69, 1.05)
 ax1.set_ylabel("Fitness", fontdict={'fontsize': 13})
 ax2.set_ylabel("Fitness", fontdict={'fontsize': 13})
@@ -163,5 +165,53 @@ boxAx.tick_params(axis='both', which='major', labelsize=13)
 boxAx.set_ylabel("Modularity of solution", fontdict={'fontsize': 13})
 boxAx.yaxis.grid(True, linestyle='-', which='major', color='lightgrey', alpha=0.5)
 boxAx.set_title("Modularity under different sets of goals", fontdict={'fontsize': 13})
+boxAx.set_ylim(-0.35,0.65)
 
 plt.savefig("Figures/BoxPlotModularity.png")
+
+max = 4999
+samplingPeriod = 100
+chosen = [4, 5, 8, 43]
+chosenCount = len(chosen)
+fileCount = 20
+
+# get the modularity over time of all experiments
+# for the chosen runs
+history = np.full((chosenCount, fileCount, max), np.nan)
+for i in range(chosenCount):
+    for j in range(fileCount):
+        with open("Data/ModularityDecay/Modularity/Modularity" + str(chosen[i]) + "-" + str(j) + ".txt") as file:
+            data = np.array(file.readlines())
+            data = np.array([line.split(",") for line in data]).T
+        history[i][j] = data[0]
+
+# find the average and error for every timepoint
+avgTraj = np.full((chosenCount, ceil(max/samplingPeriod)), np.nan)
+stdTraj = np.full((chosenCount, ceil(max/samplingPeriod)), np.nan)
+
+for i, trajectory in enumerate(history):
+    avgTraj[i] = np.array([np.mean(timepoint) for timepoint in trajectory.T[::samplingPeriod]])
+    stdTraj[i] = np.array([np.std(timepoint) for timepoint in trajectory.T[::samplingPeriod]])
+
+# initialize figure
+fig, axes = plt.subplots(2, 2, sharex=True, sharey=True)
+axes = axes.flatten()
+colour = "tab:blue"
+
+# plot the data with its errors
+xdata = list(range(0, max, samplingPeriod))
+for i in range(len(chosen)):
+    axes[i].errorbar(xdata, avgTraj[i], stdTraj[i], alpha=0.5, color=colour)
+    axes[i].plot(xdata, avgTraj[i], "-o", color=colour)
+    axes[i].tick_params(axis='both', which='major', labelsize=13)
+
+axes[0].set_ylim(0.1, 0.65)
+
+# place axis labels around the outside and add title
+axes[2].set_xlabel("Generations", fontdict={'fontsize': 13})
+axes[3].set_xlabel("Generations", fontdict={'fontsize': 13})
+axes[0].set_ylabel("Modularity", fontdict={'fontsize': 13})
+axes[2].set_ylabel("Modularity", fontdict={'fontsize': 13})
+plt.suptitle("Modularity over time", fontsize=16)
+
+plt.savefig("Figures/ModularityDecay.png")

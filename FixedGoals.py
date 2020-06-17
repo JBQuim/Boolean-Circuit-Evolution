@@ -26,7 +26,7 @@ sizeParam = 0.1
 cutoff = 11
 
 # modularity is adjusted for, using the values of Qmax and Qrand previously found
-Qmax = 0.6339
+Qmax = 0.6435
 Qrand = 0.3523
 
 # config is a dictionary with the probability of each mutation and the fraction of top fitness individuals considered
