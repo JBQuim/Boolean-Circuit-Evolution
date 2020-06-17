@@ -91,14 +91,25 @@ Here the goal is switched every 20 generations between G1 and G2. All 100 runs t
   Fig. 4 - Average modularity of the perfect solutions produced under three different types of goals. Those under time varying modular goals are significantly more modular.
 </p>
 
-The paper also explores the outcome of performing fixed goal evolution on already perfect, modular solutions. As time goes on, the modularity is found to fall and then stabilize (see Fig. 5)
+The difference in modularity can often be seen by eye (see Fig. 5), with those evolved under modularly varying goals having modules which's function can be understood.
+
+<p align="center">
+  <img width="460" src="https://user-images.githubusercontent.com/63521540/84913489-e45e1c80-b0ba-11ea-9fe9-2640cb9bd64b.png">
+</p>
+
+<p align="center">
+  Fig. 5 - Network evolved under fixed goals (Left) and network evolved under modular goals (Right). The function of each module can sometimes be understood by inspection.
+</p>
+
+
+The paper also explores the outcome of performing fixed goal evolution on already perfect, modular solutions. As time goes on, the modularity is found to fall and then stabilize (see Fig. 6)
 
 <p align="center">
   <img width="460" src="Figures/ModularityDecay.png">
 </p>
 
 <p align="center">
-  Fig. 5 - Average modularity across a generation with time. Each plot is a separate simulation made up of 20 runs. Each run started with a different population of 1000 identical, perfectly fit and modular solutions.
+  Fig. 6 - Average modularity across a generation with time. Each plot is a separate simulation made up of 20 runs. Each run started with a different population of 1000 identical, perfectly fit and modular solutions.
 </p>
 
 ## Conclusion
