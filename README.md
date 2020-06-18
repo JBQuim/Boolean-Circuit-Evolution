@@ -13,7 +13,7 @@ Evolution in nature has produced no shortage in diversity in design of biologica
 Networks of logic gates are used as a model problem. Networks of NAND gates can encode any boolean function depending on how these gates are wired together. NAND gates take in two inputs and output `True` if either of them is `False`. The problem statement is therefore to find the smallest such network that implements a given boolean function. To be acted upon by the evolutionary algorith, every potential solution has to be encoded by a genome. Every two numbers in the genome represent the inputs of a gate (see Fig. 1). Negative numbers represent the inputs of the network and the output of the network is given by the output of gate 0.
 
 <p align="center">
-  <img width="460"src="Figures/ExampleNetwork.png">
+  <img width="460"src="Figures/ExampleNetwork.PNG">
 </p>
 
 <p align="center">
@@ -105,7 +105,7 @@ The difference in modularity can often be seen by eye (see Fig. 5), with those e
 The paper also explores the outcome of performing fixed goal evolution on already perfect, modular solutions. As time goes on, the modularity is found to fall and then stabilize (see Fig. 6)
 
 <p align="center">
-  <img width="460" src="Figures/ModularityDecay.png">
+  <img width="460" src="Figures/ModularityDecay.PNG">
 </p>
 
 <p align="center">
