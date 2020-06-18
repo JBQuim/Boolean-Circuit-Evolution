@@ -118,7 +118,7 @@ Some of the findings of the paper by Uri Alon and Nadav Kashtan are reproduced. 
 
 ## Future
 
-There are some experiments from the paper that were not implemented. These include evolution under more complex goals, both fixed and time-varying, and evolution of neural networks. These experiments are important because they were used to show that evolution under modularly varying goals leads to shorter generation times and that this improvement scales with the complexity of the task. They also took more measurements, including measurements of the modularity of biological networks and of the relative abundance of network motifs in evolved networks.
+There are some experiments from the paper that were not implemented. These include evolution under more complex goals, both fixed and time-varying; evolution of neural networks and evolution under time-varying random goals. These experiments are important because they were used to show that evolution under  varying goals leads to shorter generation times and more modular solutions only if the goals share subgoals. They also showed that this improvement scales with the complexity of the task. The paper takes more measurements, including measurements of the modularity of biological networks and of the relative abundance of network motifs in evolved networks.
 
 ## Usage
 
