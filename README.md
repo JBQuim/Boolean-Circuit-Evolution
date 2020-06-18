@@ -10,7 +10,7 @@ Evolution in nature has produced no shortage in diversity in design of biologica
 
 ### Networks of logic gates
 
-Networks of logic gates are used as a model problem. Networks of NAND gates can encode any boolean function depending on how these gates are wired together. NAND gates take in two inputs and output `True` if either of them is `False`. The problem statement is therefore to find the smallest such network that implements a given boolean function. To be acted upon by the evolutionary algorith, every potential solution has to be encoded by a genome. Every two numbers in the genome represent the inputs of a gate (see Fig. 1). Negative numbers represent the inputs of the network and the output of the network is given by the output of gate 0.
+Networks of logic gates are used as a model problem. Networks of NAND gates can encode any boolean function depending on how these gates are wired together. NAND gates take in two inputs and output `True` if either of them is `False`. The problem statement is therefore to find the smallest such network that implements a given boolean function. To be acted upon by the evolutionary algorithm, every potential solution has to be encoded by a genome. Every two numbers in the genome represent the inputs of a gate (see Fig. 1). Negative numbers represent the inputs of the network and the output of the network is given by the output of gate 0.
 
 <p align="center">
   <img width="460"src="Figures/ExampleNetwork.PNG">
