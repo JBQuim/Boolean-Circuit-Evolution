@@ -25,7 +25,7 @@ Networks of logic gates are used as a model problem. Networks of NAND gates can 
 The quality of a solution is judged by the similarity of the network's output to the desired output, for every combination of inputs (see Table 1).
 
 <p align="center">
-  <img width="460" src="https://user-images.githubusercontent.com/63521540/84573608-e6199e80-ada1-11ea-8b7e-e7f8d5768a9d.JPG">
+  <img width="460" src="Figures/ExampleNetworks.png">
 </p>
 
 <p align="center">
@@ -46,7 +46,7 @@ Mutations can be point mutations, which switch the input of a single gate for an
 
 ### Modularity measure
 
-Modularity is a property of a partition of a network into modules. The modularity of a partition is sum over all modules of the fraction of the edges that lie within that module minus the expected number for this quantity. For information on how to find the partition and then calculate its modularity refer to [this](https://doi.org/10.1103/PhysRevE.69.066133) paper. Here, the algorithm is implemented by the python library `networkx`.
+Modularity is a property of a partition of a network into modules. The modularity of a partition is the sum over all modules of the fraction of the edges that lie within that module minus the expected number for this quantity. For information on how to find the partition and then calculate its modularity refer to [this](https://doi.org/10.1103/PhysRevE.69.066133) paper. Here, the algorithm is implemented by the python library `networkx`.
 
 The modularity thus obtained, `Qreal`, can be normalized with respect to randomly generated networks to obtain `Qm`. This measure can be found from the expression:
 
@@ -58,7 +58,7 @@ Where `Qrand` is the modularity of a randomly generated network and `Qmax` the m
 
 The evolutionary algorithm was challenged with creating a network of NAND gates that would take four boolean inputs and output the same value as some function `G`. The fitness function was the fraction of all inputs that produced the correct output, with a small penalty for size being over a certain cutoff. This ensured that networks would remain small. 
 
-The first boolean functions attempted were `G1 = I₁ XOR I₂ AND I₃ XOR I₄` and `G2 = I₁ XOR I₂ OR I₃ XOR I₄`. Over the 50 runs carried out for each goal 37 and 32 runs, for G1 and G2 respectively, reached solutions within 10⁵ generations. Over the runs that did reach a solution, the number of generations taken was 3000 (-1000, 4000) and 11000 (-5000, 15000) for G1 and G2, respectively. It is interesting that despite G2 seemingly being of the same complexity it took about eight times as many generations to reach a perfect solution. The fitness of the most fit individual over time in a typical run is shown in Fig. 2.
+The first boolean functions attempted were `G1 = I₁ XOR I₂ AND I₃ XOR I₄` and `G2 = I₁ XOR I₂ OR I₃ XOR I₄`. Over the 50 runs carried out for each goal, 37 and 32 runs, for G1 and G2 respectively, reached solutions within 10⁵ generations. Over the runs that did reach a solution, the number of generations taken was 3000 (-1000, 4000) and 11000 (-5000, 15000) for G1 and G2, respectively. It is interesting that despite G2 seemingly being of the same complexity it took about four times as many generations to reach a perfect solution. The fitness of the most fit individual over time in a typical run is shown in Fig. 2.
 
 <p align="center">
   <img width="460" src="Figures/TypicalG1Run.png">
@@ -94,7 +94,7 @@ Here the goal is switched every 20 generations between G1 and G2. All 100 runs t
 The difference in modularity can often be seen by eye (see Fig. 5), with those evolved under modularly varying goals having modules which's function can be understood.
 
 <p align="center">
-  <img width="460" src="https://user-images.githubusercontent.com/63521540/84913489-e45e1c80-b0ba-11ea-9fe9-2640cb9bd64b.png">
+  <img width="460" src="Figures/ModularNetworks.png">
 </p>
 
 <p align="center">
@@ -118,7 +118,7 @@ Some of the findings of the paper by Uri Alon and Nadav Kashtan are reproduced. 
 
 ## Future
 
-There are some experiments from the paper that were not implemented. These include evolution under more complex goals, both fixed and time-varying, and evolution of neural networks. These experiments are important because they were used to show that evolution under modularly varying goals leads to shorter generation times and that this improvement scales with the complexity of the task.
+There are some experiments from the paper that were not implemented. These include evolution under more complex goals, both fixed and time-varying, and evolution of neural networks. These experiments are important because they were used to show that evolution under modularly varying goals leads to shorter generation times and that this improvement scales with the complexity of the task. They also took more measurements, including measurements of the modularity of biological networks and of the relative abundance of network motifs in evolved networks.
 
 ## Usage
 
