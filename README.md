@@ -98,7 +98,7 @@ The difference in modularity can often be seen by eye (see Fig. 5), with those e
 </p>
 
 <p align="center">
-  Fig. 5 - Network evolved under fixed goals (Left) and network evolved under modular goals (Right). The function of each module can sometimes be understood by inspection.
+  Fig. 5 - Network evolved under modularly varying goals. (Top) G1 network and (Bottom) G2 network, separated by only two point mutations. The function of each module can sometimes be understood by inspection. 
 </p>
 
 
