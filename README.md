@@ -1,6 +1,6 @@
 # Spontaneous evolution of modularity in logic gate networks
 
-Some of the findings outlined in [this](https://doi.org/10.1073/pnas.0503610102) paper by Nadav Kashtan and Uri Alon are replicated. See the paper for more detailed exploration of the results and a more in depth explanation. This was intended only as a learning exercise inspired by [a lecture](https://youtu.be/cdaynA0PyPU) by Uri Alon.
+Some of the findings outlined in [this](https://doi.org/10.1073/pnas.0503610102) paper by Nadav Kashtan and Uri Alon are replicated. See the paper for more detailed exploration of the results and a more in depth explanation. None of the findings are original and the project is intended only as a learning exercise inspired by [a lecture](https://youtu.be/cdaynA0PyPU) by Uri Alon.
 
 ## Goals
 
