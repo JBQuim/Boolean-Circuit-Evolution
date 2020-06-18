@@ -94,7 +94,7 @@ Here the goal is switched every 20 generations between G1 and G2. All 100 runs t
 The difference in modularity can often be seen by eye (see Fig. 5), with those evolved under modularly varying goals having modules which's function can be understood.
 
 <p align="center">
-  <img width="460" src="Figures/ModularNetworks.png">
+  <img width="460" src="Figures/ModularNetworks.PNG">
 </p>
 
 <p align="center">
@@ -105,7 +105,7 @@ The difference in modularity can often be seen by eye (see Fig. 5), with those e
 The paper also explores the outcome of performing fixed goal evolution on already perfect, modular solutions. As time goes on, the modularity is found to fall and then stabilize (see Fig. 6)
 
 <p align="center">
-  <img width="460" src="Figures/ModularityDecay.PNG">
+  <img width="460" src="Figures/ModularityDecay.png">
 </p>
 
 <p align="center">
