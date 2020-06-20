@@ -1,6 +1,6 @@
 # Spontaneous evolution of modularity in logic gate networks
 
-Some of the findings outlined in [this](https://doi.org/10.1073/pnas.0503610102) paper by Nadav Kashtan and Uri Alon are replicated. See the paper for more detailed exploration of the results and a more in depth explanation. None of the findings are original and the project is intended only as a learning exercise inspired by [a lecture](https://youtu.be/cdaynA0PyPU) by Uri Alon.
+Some of the findings outlined in [this](https://doi.org/10.1073/pnas.0503610102) paper by Nadav Kashtan and Uri Alon are reproduced. See the paper for more detailed exploration of the results and a more in depth explanation. None of the findings are original and the project is intended only as a learning exercise inspired by [a lecture](https://youtu.be/cdaynA0PyPU) by Uri Alon.
 
 ## Goals
 
@@ -114,7 +114,7 @@ The paper also explores the outcome of performing fixed goal evolution on alread
 
 ## Conclusion
 
-Some of the findings of the paper by Uri Alon and Nadav Kashtan are reproduced. Notably the fact that electrical circuits evolved under time varying modular goals are shown to produce highly modular solutions when compared to those evolved under fixed goals. The decay of modularity when perfect solutions are evolved under fixed goals is also replicated.
+Some of the findings of the paper by Uri Alon and Nadav Kashtan are reproduced. Notably the fact that electrical circuits evolved under time varying modular goals are shown to produce highly modular solutions when compared to those evolved under fixed goals. The decay of modularity when perfect solutions are evolved under fixed goals is also reproduced.
 
 ## Future
 
