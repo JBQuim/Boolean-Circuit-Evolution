@@ -91,7 +91,7 @@ Here the goal is switched every 20 generations between G1 and G2. All 100 runs t
   Fig. 4 - Average modularity of the perfect solutions produced under three different types of goals. Those under time varying modular goals are significantly more modular.
 </p>
 
-The difference in modularity can often be seen by eye (see Fig. 5), with those evolved under modularly varying goals having modules which's function can be understood.
+The difference in modularity can often be seen by eye (see Fig. 5), with those evolved under modularly varying goals having modules whose function can be understood.
 
 <p align="center">
   <img width="460" src="Figures/ModularNetworks.PNG">
